@@ -23,6 +23,8 @@ ui(new Ui::PreferencesDialog) {
     connect(TogglApi::instance, SIGNAL(updateContinueStopShortcut()),  // NOLINT
             this, SLOT(updateContinueStopShortcut()));  // NOLINT
 
+    updateCheckboxLabels();
+
     connect(ui->dayCheckbox_1, &QCheckBox::clicked, this, &PreferencesDialog::onDayCheckboxClicked);
     connect(ui->dayCheckbox_2, &QCheckBox::clicked, this, &PreferencesDialog::onDayCheckboxClicked);
     connect(ui->dayCheckbox_3, &QCheckBox::clicked, this, &PreferencesDialog::onDayCheckboxClicked);
@@ -36,6 +38,17 @@ ui(new Ui::PreferencesDialog) {
 
 PreferencesDialog::~PreferencesDialog() {
     delete ui;
+}
+
+void PreferencesDialog::setBeginningOfWeek(uint8_t day) {
+    if (day == beginningOfWeek)
+        return;
+    QVector<bool> stored;
+    for (int i = 0; i < 7; i++)
+        stored.append(checkBoxForDay(i)->isChecked());
+    beginningOfWeek = day;
+    for (int i = 0; i < 7; i++)
+        checkBoxForDay(i)->setChecked(stored[i]);
 }
 
 void PreferencesDialog::displaySettings(const bool open,
@@ -85,13 +98,13 @@ void PreferencesDialog::displaySettings(const bool open,
 
     ui->focusAppOnShortcut->setChecked((settings->FocusOnShortcut));
 
-    ui->dayCheckbox_1->setChecked(settings->RemindOnMonday);
-    ui->dayCheckbox_2->setChecked(settings->RemindOnTuesday);
-    ui->dayCheckbox_3->setChecked(settings->RemindOnWednesday);
-    ui->dayCheckbox_4->setChecked(settings->RemindOnThursday);
-    ui->dayCheckbox_5->setChecked(settings->RemindOnFriday);
-    ui->dayCheckbox_6->setChecked(settings->RemindOnSaturday);
-    ui->dayCheckbox_7->setChecked(settings->RemindOnSunday);
+    checkBoxForDay(0)->setChecked(settings->RemindOnMonday);
+    checkBoxForDay(1)->setChecked(settings->RemindOnTuesday);
+    checkBoxForDay(2)->setChecked(settings->RemindOnWednesday);
+    checkBoxForDay(3)->setChecked(settings->RemindOnThursday);
+    checkBoxForDay(4)->setChecked(settings->RemindOnFriday);
+    checkBoxForDay(5)->setChecked(settings->RemindOnSaturday);
+    checkBoxForDay(6)->setChecked(settings->RemindOnSunday);
 
     ui->reminderStartTimeEdit->setTime(settings->RemindStartTime);
     ui->reminderEndTimeEdit->setTime(settings->RemindEndTime);
@@ -119,13 +132,13 @@ void PreferencesDialog::displayLogin(const bool open,
 void PreferencesDialog::onDayCheckboxClicked(bool checked) {
     Q_UNUSED(checked);
     TogglApi::instance->setSettingsRemindDays(
-        ui->dayCheckbox_1->isChecked(),
-        ui->dayCheckbox_2->isChecked(),
-        ui->dayCheckbox_3->isChecked(),
-        ui->dayCheckbox_4->isChecked(),
-        ui->dayCheckbox_5->isChecked(),
-        ui->dayCheckbox_6->isChecked(),
-        ui->dayCheckbox_7->isChecked()
+        checkBoxForDay(0)->isChecked(),
+        checkBoxForDay(1)->isChecked(),
+        checkBoxForDay(2)->isChecked(),
+        checkBoxForDay(3)->isChecked(),
+        checkBoxForDay(4)->isChecked(),
+        checkBoxForDay(5)->isChecked(),
+        checkBoxForDay(6)->isChecked()
     );
 }
 
@@ -179,6 +192,13 @@ void PreferencesDialog::updateContinueStopShortcut() {
         text = "Record shortcut";
     }
     ui->continueStopButton->setText(text);
+}
+
+void PreferencesDialog::updateCheckboxLabels() {
+    static const QVector<QString> days { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+    for (int i = 0; i < 7; i++) {
+        checkBoxForDay(i)->setText(days[i]);
+    }
 }
 
 void PreferencesDialog::on_showHideClear_clicked() {
@@ -292,7 +312,22 @@ bool PreferencesDialog::setProxySettings() {
             ui->proxyHost->text(),
             ui->proxyPort->text().toULongLong(),
             ui->proxyUsername->text(),
-            ui->proxyPassword->text());
+                                                ui->proxyPassword->text());
+}
+
+QCheckBox *PreferencesDialog::checkBoxForDay(uint8_t day) {
+    int actualDay = day - beginningOfWeek;
+    actualDay = actualDay < 0 ? 7 + actualDay : actualDay;
+    switch (actualDay) {
+    case 0: return ui->dayCheckbox_1;
+    case 1: return ui->dayCheckbox_2;
+    case 2: return ui->dayCheckbox_3;
+    case 3: return ui->dayCheckbox_4;
+    case 4: return ui->dayCheckbox_5;
+    case 5: return ui->dayCheckbox_6;
+    case 6: return ui->dayCheckbox_7;
+    default: return nullptr;
+    }
 }
 
 void PreferencesDialog::on_useProxy_clicked(bool checked) {
