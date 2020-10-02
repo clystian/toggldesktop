@@ -94,6 +94,23 @@ static CGFloat dropdownHorizontalPadding = 11;
 	self.autocompleteTableContainer.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
+- (void)updateConstraints
+{
+	[super updateConstraints];
+
+	if (self.backgroundView.superview != nil)
+	{
+		NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.backgroundView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:[self topPaddingForContainer]];
+		[self.window.contentView addConstraints:@[top]];
+	}
+
+	if (self.autocompleteTableContainer.superview != nil)
+	{
+		NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.autocompleteTableContainer attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:[self topPaddingForContainer]];
+		[self.window.contentView addConstraints:@[top]];
+	}
+}
+
 - (void)addBackgroundViewIfNeed
 {
 	if (self.backgroundView.superview != nil)
