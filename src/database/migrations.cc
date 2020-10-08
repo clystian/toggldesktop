@@ -8,8 +8,8 @@
 
 namespace toggl {
 
-error Migrations::migrateObmActions() {
-    error err = db_->Migrate(
+Error Migrations::migrateObmActions() {
+    Error err = db_->Migrate(
         "obm_actions",
         "create table obm_actions("
         "local_id integer primary key,"
@@ -20,22 +20,22 @@ error Migrations::migrateObmActions() {
         "constraint fk_obm_actions_uid foreign key (uid) "
         "   references users(id) on delete no action on update no action"
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "obm_actions.drop",
         "drop table obm_actions;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     return err;
 }
 
-error Migrations::migrateObmExperiments() {
-    error err = db_->Migrate(
+Error Migrations::migrateObmExperiments() {
+    Error err = db_->Migrate(
         "obm_experiments",
         "create table obm_experiments("
         "local_id integer primary key,"
@@ -47,7 +47,7 @@ error Migrations::migrateObmExperiments() {
         "constraint fk_obm_experiments_uid foreign key (uid) "
         "   references users(id) on delete no action on update no action"
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -55,14 +55,14 @@ error Migrations::migrateObmExperiments() {
         "obm_experiments.nr",
         "CREATE UNIQUE INDEX idx_obm_experiments_nr "
         "   ON obm_experiments (uid, nr);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "drop obm_experiments.idx_obm_experiments_nr",
         "DROP INDEX IF EXISTS idx_obm_experiments_nr;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -70,7 +70,7 @@ error Migrations::migrateObmExperiments() {
         "correct obm_experiments.idx_obm_experiments_nr",
         "CREATE UNIQUE INDEX idx_obm_experiments_nr_uid "
         "   ON obm_experiments (uid, nr);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -78,15 +78,15 @@ error Migrations::migrateObmExperiments() {
     err = db_->Migrate(
         "obm_experiments.drop",
         "drop table obm_experiments;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     return err;
 }
 
-error Migrations::migrateAutotracker() {
-    error err = db_->Migrate(
+Error Migrations::migrateAutotracker() {
+    Error err = db_->Migrate(
         "autotracker_settings",
         "create table autotracker_settings("
         "local_id integer primary key,"
@@ -98,7 +98,7 @@ error Migrations::migrateAutotracker() {
         "constraint fk_autotracker_settings_uid foreign key (uid) "
         "   references users(id) on delete no action on update no action"
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -106,7 +106,7 @@ error Migrations::migrateAutotracker() {
         "autotracker_settings.term",
         "CREATE UNIQUE INDEX autotracker_settings_term "
         "   ON autotracker_settings (uid, term);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -114,15 +114,15 @@ error Migrations::migrateAutotracker() {
         "autotracker_settings.tid",
         "alter table autotracker_settings"
         " add column tid integer references tasks (id);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
-    return noError;
+    return err;
 }
 
-error Migrations::migrateClients() {
-    error err = db_->Migrate(
+Error Migrations::migrateClients() {
+    Error err = db_->Migrate(
         "clients",
         "create table clients("
         "local_id integer primary key,"
@@ -136,21 +136,21 @@ error Migrations::migrateClients() {
         "constraint fk_clients_uid foreign key (uid) "
         "   references users(id) on delete no action on update no action"
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "clients.id",
         "CREATE UNIQUE INDEX id_clients_id ON clients (uid, id); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "clients.guid",
         "CREATE UNIQUE INDEX id_clients_guid ON clients (uid, guid);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -158,15 +158,15 @@ error Migrations::migrateClients() {
     // when user creates clients offline.
     err = db_->Migrate("drop clients.id_clients_id",
                        "drop index if exists id_clients_id");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     return err;
 }
 
-error Migrations::migrateTasks() {
-    error err = db_->Migrate(
+Error Migrations::migrateTasks() {
+    Error err = db_->Migrate(
         "tasks",
         "create table tasks("
         "local_id integer primary key, "
@@ -182,29 +182,29 @@ error Migrations::migrateTasks() {
         "constraint fk_tasks_uid foreign key (uid) "
         "   references users(id) on delete no action on update no action "
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "tasks.id",
         "CREATE UNIQUE INDEX id_tasks_id ON tasks (uid, id);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "tasks.active",
         "alter table tasks add column active integer not null default 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
-    return noError;
+    return err;
 }
 
-error Migrations::migrateTags() {
-    error err = db_->Migrate(
+Error Migrations::migrateTags() {
+    Error err = db_->Migrate(
         "tags",
         "create table tags("
         "local_id integer primary key, "
@@ -218,58 +218,58 @@ error Migrations::migrateTags() {
         "constraint fk_tags_uid foreign key (uid) "
         "   references users(id) on delete no action on update no action"
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "tags.id",
         "CREATE UNIQUE INDEX id_tags_id ON tags (uid, id); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "tags.guid",
         "CREATE UNIQUE INDEX id_tags_guid ON tags (uid, guid); ");
-    if (err != noError) {
-        return err;
-    }
-
-    return noError;
-}
-
-error Migrations::migrateSessions() {
-    error err = db_->Migrate(
-        "sessions",
-        "create table sessions("
-        "local_id integer primary key, "
-        "api_token varchar not null, "
-        "active integer not null default 1 "
-        "); ");
-    if (err != noError) {
-        return err;
-    }
-
-    err = db_->Migrate(
-        "sessions.active",
-        "CREATE UNIQUE INDEX id_sessions_active ON sessions (active); ");
-    if (err != noError) {
-        return err;
-    }
-
-    err = db_->Migrate(
-        "sessions.uid",
-        "alter table sessions add column uid integer references users (id);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     return err;
 }
 
-error Migrations::migrateWorkspaces() {
-    error err = db_->Migrate(
+Error Migrations::migrateSessions() {
+    Error err = db_->Migrate(
+        "sessions",
+        "create table sessions("
+        "local_id integer primary key, "
+        "api_token varchar not null, "
+        "active integer not null default 1 "
+        "); ");
+    if (err->IsError()) {
+        return err;
+    }
+
+    err = db_->Migrate(
+        "sessions.active",
+        "CREATE UNIQUE INDEX id_sessions_active ON sessions (active); ");
+    if (err->IsError()) {
+        return err;
+    }
+
+    err = db_->Migrate(
+        "sessions.uid",
+        "alter table sessions add column uid integer references users (id);");
+    if (err->IsError()) {
+        return err;
+    }
+
+    return err;
+}
+
+Error Migrations::migrateWorkspaces() {
+    Error err = db_->Migrate(
         "workspaces",
         "create table workspaces("
         "local_id integer primary key,"
@@ -280,21 +280,21 @@ error Migrations::migrateWorkspaces() {
         "   references users(id) "
         "     on delete no action on update no action"
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "workspaces.id",
         "CREATE UNIQUE INDEX id_workspaces_id ON workspaces (uid, id);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "workspaces.premium",
         "alter table workspaces add column premium int default 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -302,7 +302,7 @@ error Migrations::migrateWorkspaces() {
         "workspaces.only_admins_may_create_projects",
         "alter table workspaces add column "
         "   only_admins_may_create_projects integer not null default 0; ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -310,7 +310,7 @@ error Migrations::migrateWorkspaces() {
         "workspaces.admin",
         "alter table workspaces add column "
         "   admin integer not null default 0; ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -318,7 +318,7 @@ error Migrations::migrateWorkspaces() {
         "workspaces.is_business",
         "alter table workspaces add column "
         "   is_business integer not null default 0; ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -326,7 +326,7 @@ error Migrations::migrateWorkspaces() {
         "workspaces.locked_date",
         "alter table workspaces add column "
         "   locked_time integer not null default 0; ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -334,15 +334,15 @@ error Migrations::migrateWorkspaces() {
         "workspaces.projects_billable_by_default",
         "alter table workspaces add column "
         "   projects_billable_by_default integer not null default 0; ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     return err;
 }
 
-error Migrations::migrateProjects() {
-    error err = db_->Migrate(
+Error Migrations::migrateProjects() {
+    Error err = db_->Migrate(
         "projects",
         "create table projects("
         "local_id integer primary key, "
@@ -361,21 +361,21 @@ error Migrations::migrateProjects() {
         "constraint fk_projects_uid foreign key (uid) "
         "   references users(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "projects.billable",
         "ALTER TABLE projects ADD billable INT NOT NULL DEFAULT 0");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "projects.is_private",
         "ALTER TABLE projects ADD is_private INT NOT NULL DEFAULT 0");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -383,35 +383,35 @@ error Migrations::migrateProjects() {
         "projects.client_guid",
         "ALTER TABLE projects "
         "ADD COLUMN client_guid VARCHAR;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "projects.id",
         "CREATE UNIQUE INDEX id_projects_id ON projects (uid, id);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "projects.guid",
         "CREATE UNIQUE INDEX id_projects_guid ON projects (uid, guid);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     return err;
 }
 
-error Migrations::migrateAnalytics() {
-    error err = db_->Migrate(
+Error Migrations::migrateAnalytics() {
+    Error err = db_->Migrate(
         "analytics_settings",
         "CREATE TABLE analytics_settings("
         "id INTEGER PRIMARY KEY, "
         "analytics_client_id VARCHAR NOT NULL"
         ")");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -419,26 +419,26 @@ error Migrations::migrateAnalytics() {
         "analytics_settings.analytics_client_id",
         "CREATE UNIQUE INDEX id_analytics_settings_client_id "
         "ON analytics_settings(analytics_client_id);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->EnsureAnalyticsClientID();
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
-    return noError;
+    return err;
 }
 
-error Migrations::migrateTimeline() {
-    error err = db_->Migrate(
+Error Migrations::migrateTimeline() {
+    Error err = db_->Migrate(
         "timeline_installation",
         "CREATE TABLE timeline_installation("
         "id INTEGER PRIMARY KEY, "
         "desktop_id VARCHAR NOT NULL"
         ")");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -446,7 +446,7 @@ error Migrations::migrateTimeline() {
         "timeline_installation.desktop_id",
         "CREATE UNIQUE INDEX id_timeline_installation_desktop_id "
         "ON timeline_installation(desktop_id);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -461,12 +461,12 @@ error Migrations::migrateTimeline() {
         "end_time INTEGER, "
         "idle INTEGER NOT NULL"
         ")");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->EnsureDesktopID();
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -474,7 +474,7 @@ error Migrations::migrateTimeline() {
         "timeline_events.chunked",
         "alter table timeline_events"
         "   add column chunked integer not null default 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -482,14 +482,14 @@ error Migrations::migrateTimeline() {
         "timeline_events.uploaded",
         "alter table timeline_events"
         "   add column uploaded integer not null default 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "timeline_events.local_id step #1",
         "ALTER TABLE timeline_events RENAME TO tmp_timeline_events");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -509,7 +509,7 @@ error Migrations::migrateTimeline() {
         "   constraint fk_timeline_events_uid foreign key (uid) "
         "     references users(id) on delete no action on update no action"
         ")");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -519,19 +519,19 @@ error Migrations::migrateTimeline() {
         "   select id, null, title, filename, user_id, "
         "       start_time, end_time, idle, uploaded, chunked "
         "   from tmp_timeline_events");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "timeline_events.local_id step #4",
         "drop table tmp_timeline_events");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->EnsureTimelineGUIDS();
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -539,15 +539,15 @@ error Migrations::migrateTimeline() {
         "timeline_events.guid",
         "CREATE UNIQUE INDEX idx_timeline_events_guid "
         "   ON timeline_events (guid);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
-    return noError;
+    return err;
 }
 
-error Migrations::migrateUsers() {
-    error err = db_->Migrate(
+Error Migrations::migrateUsers() {
+    Error err = db_->Migrate(
         "users",
         "create table users("
         "local_id integer primary key, "
@@ -559,7 +559,7 @@ error Migrations::migrateUsers() {
         "email varchar not null, "
         "record_timeline integer not null default 0"
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -567,7 +567,7 @@ error Migrations::migrateUsers() {
         "users.store_start_and_stop_time",
         "ALTER TABLE users "
         "ADD COLUMN store_start_and_stop_time INT NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -575,14 +575,14 @@ error Migrations::migrateUsers() {
         "users.timeofday_format",
         "ALTER TABLE users "
         "ADD COLUMN timeofday_format varchar NOT NULL DEFAULT 'HH:mm';");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "users.id",
         "CREATE UNIQUE INDEX id_users_id ON users (id);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -591,21 +591,21 @@ error Migrations::migrateUsers() {
         "alter table users "
         "add column duration_format varchar "
         "not null default 'classic';");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "drop users.email index",
         "DROP INDEX IF EXISTS id_users_email;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "users.api_token",
         "CREATE UNIQUE INDEX id_users_api_token ON users (api_token);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -613,14 +613,14 @@ error Migrations::migrateUsers() {
         "users.offline_data",
         "alter table users"
         " add column offline_data varchar");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "no api token step #1",
         "ALTER TABLE users RENAME TO tmp_users");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -639,7 +639,7 @@ error Migrations::migrateUsers() {
         "   duration_format varchar not null default 'classic', "
         "   offline_data varchar"
         ")");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -650,14 +650,14 @@ error Migrations::migrateUsers() {
         " record_timeline, store_start_and_stop_time, timeofday_format,"
         " duration_format, offline_data"
         " from tmp_users");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "no api token step #4",
         "drop table tmp_users");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -665,7 +665,7 @@ error Migrations::migrateUsers() {
         "users.default_pid",
         "alter table users"
         " add column default_pid integer");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -673,7 +673,7 @@ error Migrations::migrateUsers() {
         "users.default_tid",
         "alter table users"
         " add column default_tid integer references tasks (id);");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -681,7 +681,7 @@ error Migrations::migrateUsers() {
         "users.collapse_entries",
         "alter table users"
         " add column collapse_entries integer not null default 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -691,8 +691,8 @@ error Migrations::migrateUsers() {
     return err;
 }
 
-error Migrations::migrateTimeEntries() {
-    error err = db_->Migrate(
+Error Migrations::migrateTimeEntries() {
+    Error err = db_->Migrate(
         "time_entries",
         "create table time_entries("
         "local_id integer primary key, "
@@ -722,7 +722,7 @@ error Migrations::migrateTimeEntries() {
         "constraint fk_time_entries_uid foreign key (uid) "
         "   references users(id) on delete no action on update no action"
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -730,7 +730,7 @@ error Migrations::migrateTimeEntries() {
         "time_entries.id",
         "CREATE UNIQUE INDEX id_time_entries_id "
         "ON time_entries (uid, id); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -738,7 +738,7 @@ error Migrations::migrateTimeEntries() {
         "time_entries.guid",
         "CREATE UNIQUE INDEX id_time_entries_guid "
         "ON time_entries (uid, guid); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -746,14 +746,14 @@ error Migrations::migrateTimeEntries() {
         "time_entries.project_guid",
         "ALTER TABLE time_entries "
         "ADD COLUMN project_guid VARCHAR;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "time_entries.guid not null, step 1",
         "ALTER TABLE time_entries RENAME TO tmp_time_entries; ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -788,7 +788,7 @@ error Migrations::migrateTimeEntries() {
         "constraint fk_time_entries_uid foreign key (uid) "
         "   references users(id) on delete no action on update no action"
         "); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -803,14 +803,14 @@ error Migrations::migrateTimeEntries() {
         "   duronly, ui_modified_at, start, stop, duration, tags, "
         "   created_with, deleted_at, updated_at, project_guid "
         "from tmp_time_entries;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "time_entries.guid not null, step 4",
         "drop table tmp_time_entries;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -818,7 +818,7 @@ error Migrations::migrateTimeEntries() {
         "time_entries.guid not null, step 5",
         "CREATE UNIQUE INDEX id_time_entries_id "
         "   ON time_entries (uid, id); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -826,7 +826,7 @@ error Migrations::migrateTimeEntries() {
         "time_entries.guid not null, step 6",
         "CREATE UNIQUE INDEX id_time_entries_guid "
         "   ON time_entries (uid, guid); ");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -834,7 +834,7 @@ error Migrations::migrateTimeEntries() {
         "time_entries.validation_error",
         "ALTER TABLE time_entries "
         "ADD COLUMN validation_error VARCHAR;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -871,15 +871,15 @@ error Migrations::migrateTimeEntries() {
         "ALTER TABLE time_entries ADD COLUMN previous_tags text;"
         "UPDATE time_entries SET previous_tags = tags;"
         );
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
-    return noError;
+    return err;
 }
 
-error Migrations::migrateSettings() {
-    error err = db_->Migrate(
+Error Migrations::migrateSettings() {
+    Error err = db_->Migrate(
         "settings",
         "create table settings("
         "local_id integer primary key, "
@@ -889,7 +889,7 @@ error Migrations::migrateSettings() {
         "proxy_username varchar, "
         "proxy_password varchar, "
         "use_idle_detection integer not null default 1)");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -897,14 +897,14 @@ error Migrations::migrateSettings() {
         "settings.update_channel",
         "ALTER TABLE settings "
         "ADD COLUMN update_channel varchar not null default 'stable';");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     // for 5% users, set the update channel to 'beta' instead of 'stable'
     Poco::UInt64 has_settings(0);
     err = db_->UInt("select count(1) from settings", &has_settings);
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
     if (!has_settings) {
@@ -916,7 +916,7 @@ error Migrations::migrateSettings() {
         err = db_->Migrate(
             "settings.default",
             "INSERT INTO settings(update_channel) VALUES('" + channel + "')");
-        if (err != noError) {
+        if (err->IsError()) {
             return err;
         }
     }
@@ -925,7 +925,7 @@ error Migrations::migrateSettings() {
         "settings.menubar_timer",
         "ALTER TABLE settings "
         "ADD COLUMN menubar_timer integer not null default 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -933,7 +933,7 @@ error Migrations::migrateSettings() {
         "settings.menubar_project",
         "ALTER TABLE settings "
         "ADD COLUMN menubar_project integer not null default 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -941,7 +941,7 @@ error Migrations::migrateSettings() {
         "settings.dock_icon",
         "ALTER TABLE settings "
         "ADD COLUMN dock_icon INTEGER NOT NULL DEFAULT 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -949,7 +949,7 @@ error Migrations::migrateSettings() {
         "settings.on_top",
         "ALTER TABLE settings "
         "ADD COLUMN on_top INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -957,7 +957,7 @@ error Migrations::migrateSettings() {
         "settings.reminder",
         "ALTER TABLE settings "
         "ADD COLUMN reminder INTEGER NOT NULL DEFAULT 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -965,7 +965,7 @@ error Migrations::migrateSettings() {
         "settings.ignore_cert",
         "ALTER TABLE settings "
         "ADD COLUMN ignore_cert INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -973,7 +973,7 @@ error Migrations::migrateSettings() {
         "settings.idle_minutes",
         "ALTER TABLE settings "
         "ADD COLUMN idle_minutes INTEGER NOT NULL DEFAULT 5;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -981,7 +981,7 @@ error Migrations::migrateSettings() {
         "settings.focus_on_shortcut",
         "ALTER TABLE settings "
         "ADD COLUMN focus_on_shortcut INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -989,7 +989,7 @@ error Migrations::migrateSettings() {
         "settings.reminder_minutes",
         "ALTER TABLE settings "
         "ADD COLUMN reminder_minutes INTEGER NOT NULL DEFAULT 10;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -997,14 +997,14 @@ error Migrations::migrateSettings() {
         "settings.manual_mode",
         "ALTER TABLE settings "
         "ADD COLUMN manual_mode INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "focus on shortcut by default #1",
         "ALTER TABLE settings RENAME TO tmp_settings");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1030,7 +1030,7 @@ error Migrations::migrateSettings() {
         "   reminder_minutes INTEGER NOT NULL DEFAULT 10, "
         "   manual_mode INTEGER NOT NULL DEFAULT 0 "
         ")");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1043,21 +1043,21 @@ error Migrations::migrateSettings() {
         " dock_icon, on_top, reminder, ignore_cert, idle_minutes, "
         " focus_on_shortcut, reminder_minutes, manual_mode "
         " from tmp_settings");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "focus on shortcut by default #4",
         "drop table tmp_settings");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
     err = db_->Migrate(
         "focus on shortcut by default #5",
         "update settings set focus_on_shortcut = 1");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1065,7 +1065,7 @@ error Migrations::migrateSettings() {
         "settings.autodetect_proxy",
         "ALTER TABLE settings "
         "ADD COLUMN autodetect_proxy INTEGER NOT NULL DEFAULT 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1073,7 +1073,7 @@ error Migrations::migrateSettings() {
         "settings.window_x",
         "ALTER TABLE settings "
         "ADD COLUMN window_x integer not null default 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1081,7 +1081,7 @@ error Migrations::migrateSettings() {
         "settings.window_y",
         "ALTER TABLE settings "
         "ADD COLUMN window_y integer not null default 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1089,7 +1089,7 @@ error Migrations::migrateSettings() {
         "settings.window_height",
         "ALTER TABLE settings "
         "ADD COLUMN window_height integer not null default 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1097,7 +1097,7 @@ error Migrations::migrateSettings() {
         "settings.window_width",
         "ALTER TABLE settings "
         "ADD COLUMN window_width integer not null default 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1105,7 +1105,7 @@ error Migrations::migrateSettings() {
         "settings.remind_mon",
         "ALTER TABLE settings "
         "ADD COLUMN remind_mon integer not null default 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1113,7 +1113,7 @@ error Migrations::migrateSettings() {
         "settings.remind_tue",
         "ALTER TABLE settings "
         "ADD COLUMN remind_tue integer not null default 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1121,7 +1121,7 @@ error Migrations::migrateSettings() {
         "settings.remind_wed",
         "ALTER TABLE settings "
         "ADD COLUMN remind_wed integer not null default 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1129,7 +1129,7 @@ error Migrations::migrateSettings() {
         "settings.remind_thu",
         "ALTER TABLE settings "
         "ADD COLUMN remind_thu integer not null default 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1137,7 +1137,7 @@ error Migrations::migrateSettings() {
         "settings.remind_fri",
         "ALTER TABLE settings "
         "ADD COLUMN remind_fri integer not null default 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1145,7 +1145,7 @@ error Migrations::migrateSettings() {
         "settings.remind_sat",
         "ALTER TABLE settings "
         "ADD COLUMN remind_sat integer not null default 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1153,7 +1153,7 @@ error Migrations::migrateSettings() {
         "settings.remind_sun",
         "ALTER TABLE settings "
         "ADD COLUMN remind_sun integer not null default 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1161,7 +1161,7 @@ error Migrations::migrateSettings() {
         "settings.remind_starts",
         "ALTER TABLE settings "
         "ADD COLUMN remind_starts varchar not null default '';");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1169,7 +1169,7 @@ error Migrations::migrateSettings() {
         "settings.remind_ends",
         "ALTER TABLE settings "
         "ADD COLUMN remind_ends varchar not null default '';");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1177,7 +1177,7 @@ error Migrations::migrateSettings() {
         "settings.autotrack",
         "ALTER TABLE settings "
         "ADD COLUMN autotrack INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1185,7 +1185,7 @@ error Migrations::migrateSettings() {
         "settings.open_editor_on_shortcut",
         "ALTER TABLE settings "
         "ADD COLUMN open_editor_on_shortcut INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1193,7 +1193,7 @@ error Migrations::migrateSettings() {
         "settings.has_seen_beta_offering",
         "ALTER TABLE settings "
         "ADD COLUMN has_seen_beta_offering INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1201,7 +1201,7 @@ error Migrations::migrateSettings() {
         "settings.render_timeline",
         "ALTER TABLE settings "
         "ADD COLUMN render_timeline INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1209,7 +1209,7 @@ error Migrations::migrateSettings() {
         "settings.window_maximized",
         "ALTER TABLE settings "
         "ADD COLUMN window_maximized INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1217,7 +1217,7 @@ error Migrations::migrateSettings() {
         "settings.window_minimized",
         "ALTER TABLE settings "
         "ADD COLUMN window_minimized INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1225,7 +1225,7 @@ error Migrations::migrateSettings() {
         "settings.window_edit_size_height",
         "ALTER TABLE settings "
         "ADD COLUMN window_edit_size_height INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1233,7 +1233,7 @@ error Migrations::migrateSettings() {
         "settings.window_edit_size_width",
         "ALTER TABLE settings "
         "ADD COLUMN window_edit_size_width INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1241,7 +1241,7 @@ error Migrations::migrateSettings() {
         "settings.key_start",
         "ALTER TABLE settings "
         "ADD COLUMN key_start varchar not null default ''");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1249,7 +1249,7 @@ error Migrations::migrateSettings() {
         "settings.key_show",
         "ALTER TABLE settings "
         "ADD COLUMN key_show varchar not null default '';");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1257,7 +1257,7 @@ error Migrations::migrateSettings() {
         "settings.key_modifier_show",
         "ALTER TABLE settings "
         "ADD COLUMN key_modifier_show varchar not null default '';");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1265,7 +1265,7 @@ error Migrations::migrateSettings() {
         "settings.key_modifier_start",
         "ALTER TABLE settings "
         "ADD COLUMN key_modifier_start varchar not null default '';");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1273,7 +1273,7 @@ error Migrations::migrateSettings() {
         "settings.keep_end_time_fixed",
         "ALTER TABLE settings "
         "ADD COLUMN keep_end_time_fixed INTEGER NOT NULL DEFAULT 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1281,7 +1281,7 @@ error Migrations::migrateSettings() {
         "settings.mini_timer_x",
         "ALTER TABLE settings "
         "ADD COLUMN mini_timer_x INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1289,7 +1289,7 @@ error Migrations::migrateSettings() {
         "settings.mini_timer_y",
         "ALTER TABLE settings "
         "ADD COLUMN mini_timer_y INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1297,7 +1297,7 @@ error Migrations::migrateSettings() {
         "settings.mini_timer_w",
         "ALTER TABLE settings "
         "ADD COLUMN mini_timer_w INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1305,7 +1305,7 @@ error Migrations::migrateSettings() {
         "settings.pomodoro",
         "ALTER TABLE settings "
         "ADD COLUMN pomodoro INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1313,7 +1313,7 @@ error Migrations::migrateSettings() {
         "settings.pomodoro_break",
         "ALTER TABLE settings "
         "ADD COLUMN pomodoro_break INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1321,7 +1321,7 @@ error Migrations::migrateSettings() {
         "settings.mini_timer_visible",
         "ALTER TABLE settings "
         "ADD COLUMN mini_timer_visible INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1329,7 +1329,7 @@ error Migrations::migrateSettings() {
         "settings.pomodoro_minutes",
         "ALTER TABLE settings "
         "ADD COLUMN pomodoro_minutes INTEGER NOT NULL DEFAULT 25;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1337,7 +1337,7 @@ error Migrations::migrateSettings() {
         "settings.pomodoro_break_minutes",
         "ALTER TABLE settings "
         "ADD COLUMN pomodoro_break_minutes INTEGER NOT NULL DEFAULT 5;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1345,7 +1345,7 @@ error Migrations::migrateSettings() {
         "settings.stop_entry_on_shutdown_sleep",
         "ALTER TABLE settings "
         "ADD COLUMN stop_entry_on_shutdown_sleep INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1353,7 +1353,7 @@ error Migrations::migrateSettings() {
         "settings.show_touch_bar",
         "ALTER TABLE settings "
         "ADD COLUMN show_touch_bar INTEGER NOT NULL DEFAULT 1;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1361,7 +1361,7 @@ error Migrations::migrateSettings() {
         "settings.message_seen",
         "ALTER TABLE settings "
         "ADD COLUMN message_seen INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1369,7 +1369,7 @@ error Migrations::migrateSettings() {
         "settings.active_tab",
         "ALTER TABLE settings "
         "ADD COLUMN active_tab INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1377,7 +1377,7 @@ error Migrations::migrateSettings() {
         "settings.color_theme",
         "ALTER TABLE settings "
         "ADD COLUMN color_theme INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
@@ -1385,15 +1385,15 @@ error Migrations::migrateSettings() {
         "settings.force_ignore_cert",
         "ALTER TABLE settings "
         "ADD COLUMN force_ignore_cert INTEGER NOT NULL DEFAULT 0;");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
 
-    return noError;
+    return err;
 }
 
-error Migrations::migrateOnboardingStates() {
-    error err = db_->Migrate(
+Error Migrations::migrateOnboardingStates() {
+    Error err = db_->Migrate(
                              "onboarding_states",
                              "create table onboarding_states("
                              "local_id integer primary key, "
@@ -1415,61 +1415,61 @@ error Migrations::migrateOnboardingStates() {
                              "is_present_timeline_activity_onboarding integer not null default 0, "
                              "is_present_recode_activity_onboarding integer not null default 0, "
                              "CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users (id) on delete no action on update no action )");
-    if (err != noError) {
+    if (err->IsError()) {
         return err;
     }
-    return noError;
+    return err;
 }
 
-error Migrations::Run() {
-    error err = noError;
+Error Migrations::Run() {
+    Error err = NoError { };
 
     // FIXME: load known migrations before proceeding
     // FIXME: dont run db->Migrate directly, but consult existing list first
 
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateUsers();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateWorkspaces();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateClients();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateProjects();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateTasks();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateTags();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateTimeEntries();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateSessions();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateSettings();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateAnalytics();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateAutotracker();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateTimeline();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateObmActions();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateObmExperiments();
     }
-    if (noError == err) {
+    if (!err->IsError()) {
         err = migrateOnboardingStates();
     }
     return err;
